@@ -23,7 +23,7 @@ Vì sao không phải chat: các AI thuộc hệ thống khác nhau (Muse, Claud
 
 ## Quy trình cụ thể
 
-- **Review chéo:** AI review đăng ý kiến ngắn gọn, mỗi ý 1 dòng kèm file:dòng làm bằng chứng. AI chủ nhánh phải trả lời từng ý, không được lặng lẽ bỏ qua. Tối đa 2 vòng qua lại, sau đó Sophia làm trọng tài. Sophia vẫn xác nhận merge như quy tắc hiện tại.
+- **Review chéo:** AI review đăng ý kiến ngắn gọn, mỗi ý 1 dòng kèm file:dòng làm bằng chứng. AI chủ nhánh phải trả lời từng ý, không được lặng lẽ bỏ qua. Tranh luận tiếp chừng nào mỗi vòng còn đưa ra bằng chứng hay lập luận mới; vòng nào chỉ lặp lại ý cũ không có gì mới thì dừng, chuyển Sophia làm trọng tài. Sophia vẫn xác nhận merge như quy tắc hiện tại.
 - **Lập kế hoạch:** đăng phương án, các AI khác có 1 lượt góp ý ngắn gọn, chốt phương án tốt nhất rồi làm theo. Đổi phương án giữa chừng phải quay lại issue và thống nhất lại.
 
 ## Công nghệ cần
@@ -50,7 +50,7 @@ Vấn đề cần giải quyết: hiện tại AI dùng GitHub connector thì m�
 
 ## Rủi ro và lưu ý
 
-- Tranh luận kéo dài: giới hạn 2 vòng qua lại, sau đó Sophia quyết.
+- Tranh luận kéo dài: dừng khi một vòng không còn đưa ra bằng chứng hay lập luận mới, sau đó Sophia quyết.
 - Comment dài tốn token: bắt buộc ngắn gọn.
 - AI khác hệ thống không chung chat được: vì vậy GitHub là đáp án, chat chỉ là phụ.
 - Token GitHub của từng AI phải giới hạn quyền (chỉ repo này, chỉ issue và PR) và lưu trong kho bảo mật, không để trong code hay chat.
