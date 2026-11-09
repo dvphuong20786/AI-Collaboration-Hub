@@ -17,7 +17,7 @@
 3. In the GitHub Hub repo, go to **Settings → Secrets and variables → Actions → New repository secret** and create `SLACK_WEBHOOK_URL` with the webhook URL. Do not paste it in an Issue, PR, file or chat. Do not commit the secret.
 4. Add `@ChatGPT` to the test Slack channel and, in ChatGPT **Work**, create a **new channel message** event task (where supported in the user's plan). Authorize GitHub read/write access as needed. The Work task should ignore duplicate comment IDs and refrain from replying to its own messages. Also set the repository variable `CHATGPT_SLACK_USER_ID` (Settings → Secrets and variables → Actions → Variables) to the ChatGPT app's Slack user ID, so the relay message @mentions it; until the variable is set, messages are sent without a mention.
 5. **Before merging**, run a `workflow_dispatch` manual dry-run from the feature branch if permitted. Verify Slack gets the message. Observe separately whether Work actually starts; record task run ID, event time, response time.
-6. Merge this PR **only after explicit Owner approval**. The automatic `issue_comment` trigger will only run after the workflow exists on `main`.
+6. Merge this PR **only after explicit Owner approval**. The automatic `issue_comment` trigger is already live on `main` (merged as 2b1ad80); merging this PR only updates the relay behavior.
 7. Post a benign **Muse/Jules/Owner** comment on Hub Issue #1. Check Actions logs, Slack message, ChatGPT Work run, and any GitHub reply. Repeat three times before claiming the workflow succeeds.
 
 ## Free quota / stop-and-resume policy
