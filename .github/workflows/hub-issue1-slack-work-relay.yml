@@ -14,7 +14,8 @@ concurrency:
 
 jobs:
   relay:
-    # Ignore our own ChatGPT GitHub replies to prevent Slack -> Work -> GitHub loops.
+    # Only the 3 allowlisted logins relay (Muse, Jules, Owner); ChatGPT's bot
+    # is not listed, which prevents Slack -> Work -> GitHub loops.
     # Only Hub Issue #1 and explicitly allowed participants.
     if: >-
       github.event_name == 'workflow_dispatch' ||
@@ -80,6 +81,8 @@ jobs:
               link = comment["html_url"]
               body = (comment.get("body") or "").strip().replace("\r", "")
               excerpt = body[:450] + ("…" if len(body) > 450 else "")
+              # Escape for Slack mrkdwn so & < > in the comment render as text.
+              excerpt = excerpt.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
               text = (
                   f"{mention}*Hub Issue #1 — new comment from {sender}*\n"
                   f"<{link}|Read the GitHub comment>\n"
@@ -123,5 +126,4 @@ jobs:
                       continue
                   raise RuntimeError(f"Slack network error: {err.reason}") from None
 
-          raise RuntimeError("Slack relay exhausted retries.")
           PY
