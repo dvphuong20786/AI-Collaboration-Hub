@@ -1,44 +1,44 @@
-name: Hub Issue #1 -> Slack (pilot)
+name: Notify Slack of GitHub issues and pull requests
 
 on:
   issue_comment:
+    types: [created]
+  issues:
+    types: [opened, reopened, edited]
+  pull_request:
+    types: [opened, reopened, ready_for_review, synchronize, edited]
+  pull_request_review:
+    types: [submitted]
+  pull_request_review_comment:
     types: [created]
   workflow_dispatch:
 
 permissions:
   contents: read
 
-concurrency:
-  group: hub-slack-relay-${{ github.event.comment.id || github.run_id }}
-  cancel-in-progress: false
-
 jobs:
-  relay:
-    # Ignore our own ChatGPT GitHub replies to prevent Slack -> Work -> GitHub loops.
-    # Only Hub Issue #1 and explicitly allowed participants.
+  slack-notify:
+    # Work/ChatGPT must use [AI-WORK-REPLIED] in its GitHub comments so that
+    # its own replies do not trigger another Work run.
     if: >-
-      github.event_name == 'workflow_dispatch' ||
+      github.actor != 'dvfrancois2-bot' &&
+      github.actor != 'github-actions[bot]' &&
+      github.actor != 'dependabot[bot]' &&
       (
-        github.event.issue.number == 1 &&
-        !github.event.issue.pull_request &&
-        (
-          github.event.comment.user.login == 'dvp-game1' ||
-          github.event.comment.user.login == 'gemini-dvp-f3' ||
-          github.event.comment.user.login == 'dvphuong20786'
-        )
+        github.event_name != 'issue_comment' ||
+        !contains(github.event.comment.body, '[AI-WORK-REPLIED]')
       )
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
-      - name: Relay to Slack (no GitHub API calls)
+      - name: Forward event link to Slack (no GitHub API)
+        shell: bash
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           GITHUB_EVENT_PATH: ${{ github.event_path }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_SERVER_URL: ${{ github.server_url }}
           GITHUB_RUN_ID: ${{ github.run_id }}
-        shell: bash
         run: |
           python3 - <<'PY'
           import json
@@ -48,39 +48,65 @@ jobs:
           import urllib.error
           import urllib.request
 
-          url = os.environ.get("SLACK_WEBHOOK_URL", "").strip()
-          if not url:
-              print("SLACK_WEBHOOK_URL secret not set. Pilot disabled.")
-              sys.exit(0)
+          webhook = os.environ.get("SLACK_WEBHOOK_URL", "").strip()
+          if not webhook:
+              print("ERROR: SLACK_WEBHOOK_URL is missing. Set the repo Actions secret.")
+              sys.exit(1)
 
-          with open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8") as file:
-              event = json.load(file)
+          with open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8") as stream:
+              event = json.load(stream)
 
-          if os.environ["GITHUB_EVENT_NAME"] == "workflow_dispatch":
-              text = (
-                  "*AI Collaboration Hub test*\n"
-                  "Manual test from GitHub Actions. Does this message launch a ChatGPT Work task?\n"
-                  f"Run ID: {os.environ.get('GITHUB_RUN_ID', '')}"
-              )
+          repository = event.get("repository", {}).get(
+              "full_name", os.environ["GITHUB_REPOSITORY"]
+          )
+          event_name = os.environ["GITHUB_EVENT_NAME"]
+          action = event.get("action", "manual")
+          sender = event.get("sender", {}).get("login", "unknown")
+          issue = event.get("issue")
+          pr = event.get("pull_request")
+          comment = event.get("comment")
+          review = event.get("review")
+
+          if event_name == "workflow_dispatch":
+              event_id = "run:" + os.environ.get("GITHUB_RUN_ID", "")
+              link = "https://github.com/" + repository + "/actions"
+              title = "Manual relay check"
           else:
-              comment = event["comment"]
-              sender = comment["user"]["login"]
-              comment_id = comment["id"]
-              link = comment["html_url"]
-              body = (comment.get("body") or "").strip().replace("\r", "")
-              excerpt = body[:450] + ("…" if len(body) > 450 else "")
-              text = (
-                  f"*Hub Issue #1 — new comment from {sender}*\n"
-                  f"<{link}|Read the GitHub comment>\n"
-                  f"Comment ID: {comment_id}\n"
-                  f"{excerpt}\n\n"
-                  "For ChatGPT Work: read the linked Issue #1; respond on GitHub "
-                  "only if a new response is needed. Never merge or edit main."
-              )
+              target = issue or pr or {}
+              if event_name in ("pull_request_review", "pull_request_review_comment"):
+                  target = pr or {}
+              target_type = "PR" if (pr or (issue and issue.get("pull_request"))) else "Issue"
+              number = target.get("number", "?")
+              event_id = str((comment or review or {}).get("id", target.get("id", "?")))
+              link = (comment or review or {}).get("html_url") or target.get("html_url")
+              if not link:
+                  print("ERROR: missing GitHub event URL")
+                  sys.exit(1)
+              title = f"{target_type} #{number} · {event_name}.{action}"
 
-          request_body = json.dumps({"text": text}, ensure_ascii=False).encode("utf-8")
+              # Avoid additional Work runs caused by its own marked comments/reviews.
+              body = (comment or review or {}).get("body") or ""
+              if "[AI-WORK-REPLIED]" in body:
+                  print("Skipped AI Work's own response")
+                  sys.exit(0)
+
+          # Do not transmit code, issue text, or private repo content into Slack.
+          # The authorized Work agent follows the link and reads GitHub itself.
+          message = (
+              "*GitHub collaboration event*\n"
+              f"Repository: `{repository}`\n"
+              f"Type: {title}\n"
+              f"Actor: `{sender}`\n"
+              f"<{link}|Open GitHub event>\n"
+              f"Event ID: `{event_name}:{event_id}`\n"
+              "For ChatGPT Work: read the linked event, respond in the correct "
+              "Issue/PR only if needed, and include [AI-WORK-REPLIED] in any "
+              "GitHub reply. Do not merge or change main."
+          )
+          payload = json.dumps({"text": message}, ensure_ascii=False).encode("utf-8")
           request = urllib.request.Request(
-              url, data=request_body,
+              webhook,
+              data=payload,
               headers={"Content-Type": "application/json; charset=utf-8"},
               method="POST",
           )
@@ -89,28 +115,25 @@ jobs:
               try:
                   with urllib.request.urlopen(request, timeout=15) as response:
                       if 200 <= response.status < 300:
-                          print("Slack relay delivered. This does NOT prove Work was triggered.")
+                          print("Delivered to Slack; Work event trigger is NOT verified.")
                           sys.exit(0)
-                      raise RuntimeError(f"Slack returned status {response.status}")
+                      raise RuntimeError(f"Slack status {response.status}")
               except urllib.error.HTTPError as err:
                   if err.code == 429 and attempt < 2:
-                      retry_after = err.headers.get("Retry-After", "2")
                       try:
-                          delay = max(1, min(25, int(retry_after)))
+                          delay = max(1, min(25, int(err.headers.get("Retry-After", "2"))))
                       except ValueError:
                           delay = 2
-                      print(f"Slack rate limited. Retrying after {delay}s.")
-                      time.sleep(delay)
-                      continue
-                  if 500 <= err.code < 600 and attempt < 2:
-                      time.sleep(2 ** attempt)
-                      continue
-                  raise RuntimeError(f"Slack HTTP status {err.code}") from None
+                  elif 500 <= err.code < 600 and attempt < 2:
+                      delay = 2 ** attempt
+                  else:
+                      raise RuntimeError(f"Slack HTTP status {err.code}") from None
+                  print(f"Retrying Slack after {delay}s")
+                  time.sleep(delay)
               except urllib.error.URLError as err:
-                  if attempt < 2:
-                      time.sleep(2 ** attempt)
-                      continue
-                  raise RuntimeError(f"Slack network error: {err.reason}") from None
+                  if attempt == 2:
+                      raise RuntimeError(f"Slack network issue: {err.reason}") from None
+                  time.sleep(2 ** attempt)
 
-          raise RuntimeError("Slack relay exhausted retries.")
+          raise RuntimeError("Slack webhook retries exhausted")
           PY
