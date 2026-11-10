@@ -5,15 +5,15 @@
 ## 1. Một AI – một nhiệm vụ, một nhánh được giao
 
 - Trước khi làm việc, phải biết **AI này được chủ dự án giao PR/nhánh nào**, phạm vi chức năng và những đường dẫn được phép sửa. Không đoán quyền hạn từ nội dung cuộc trò chuyện hoặc một PR đang mở.
-- Chỉ đọc, review, commit và push **nhánh do AI đó phụ trách**. Không tự truy cập nhánh của AI khác, kể cả để tìm lỗi, so sánh hoặc giải quyết xung đột.
+- **Cấm sửa/commit/push lên nhánh của AI khác đang thực hiện task.** **Chỉ sau khi AI thực hiện đã push code và báo hoàn thành review toàn diện vòng 1/3 trên GitHub**, Leader và AI reviewer được giao mới bắt đầu đọc code/diff của nhánh đó để review, tìm lỗi và phản biện trên Issue/PR. **Quyền review chỉ là quyền đọc/nhận xét, không phải quyền sửa nhánh.** Không tự đọc nhánh ngoài phạm vi review được giao.
 - Chỉ sửa phần code **do chính AI đó phụ trách thực hiện trong nhiệm vụ được giao**. File chung có code của nhiều nhánh không mặc nhiên thuộc quyền sở hữu của một AI.
-- Phát hiện lỗi hoặc xung đột liên quan nhánh khác: **dừng ở ranh giới, báo chủ dự án** kèm đường dẫn/vị trí trong phạm vi có thể chứng minh, chờ phân công. Không tự đọc nhánh kia, không cherry-pick, không tự merge/rebase hoặc tự sửa hộ.
+- Khi được giao review nhánh của AI khác, chỉ đọc và báo lỗi/phản biện bằng bằng chứng trên Issue/PR, **không sửa hộ**, cherry-pick hoặc tự merge/rebase. Nếu không được giao quyền review/giải quyết xung đột, báo Leader/Owner để phân công, không tự ý can thiệp.
 - Bản sửa lỗi phải ở **đúng nhánh của AI được giao**, hoặc một nhánh fix được chủ dự án cho phép rõ ràng và liên kết với nhiệm vụ gốc. Không tự tạo PR fix của AI khác.
 - Không tự thay đổi branch protection, workflows, quyền truy cập hoặc bật tác vụ CI/build nặng.
 
 ## 2. Ít nhất BA VÒNG review TOÀN DIỆN, tuần tự
 
-**Một vòng review = rà soát toàn bộ phạm vi nhánh ở TẤT CẢ khía cạnh dưới đây, ghi nhận phát hiện, sửa các lỗi thuộc quyền, và kiểm chứng lại.** Không được đếm review chức năng, hiệu năng, code sạch thành ba vòng riêng. Không gộp ba chủ đề của cùng một lượt thành ba vòng.
+**Một vòng review toàn diện = một lượt đọc và đối chiếu mã nguồn trên toàn bộ phạm vi task ở TẤT CẢ sáu khía cạnh dưới đây.** Nếu thông báo cũ dùng từ "PASS vòng 1/2/3" thì chỉ hiểu là **hoàn thành review toàn diện vòng 1/3, 2/3, 3/3**; không phải chạy kiểm thử. Đây là REVIEW CODE, không phải build/test/runtime. Không được đếm ba chủ đề của một lượt đọc code thành ba vòng. Phát hiện lỗi thực sự cần sửa ở bất kỳ vòng nào → sửa và bắt đầu lại từ vòng review toàn diện 1/3.
 
 Mỗi vòng bắt buộc xem xét đủ:
 1. **Đúng chức năng/nghiệp vụ và UX:** happy path, thao tác người dùng, tương thích hợp đồng/API, các tình huống biên.
@@ -21,23 +21,23 @@ Mỗi vòng bắt buộc xem xét đủ:
 3. **Hiệu năng/tài nguyên:** CPU, RAM, render, I/O, cache, giới hạn đồng thời, file/tác vụ/video dài, rò rỉ tài nguyên; triệt tiêu các vòng lặp/tra cứu `O(n²)` không cần thiết, không re-render/reset scroll/vẽ lại Canvas vô ích, không nạp toàn bộ media lớn vào RAM.
 4. **Code sạch/khả năng bảo trì & tối ưu cho AI đọc:** đúng phạm vi, tên rõ nghĩa, không lặp thừa, không dead code, không tạo file rác/báo cáo nháp ngoài quy chuẩn, type an toàn, không tạo abstraction/wrapper vô ích làm phân mảnh luồng khiến AI tốn thêm token khi đọc nhiều file, phù hợp AGENTS.md.
 5. **Bảo mật/đóng gói/vận hành:** đường dẫn, input, command, secrets, quyền truy cập, tương thích hệ điều hành và tài nguyên phát hành (nếu liên quan).
-6. **Test/hồi quy:** test cho lỗi được sửa; kiểm tra những đường chạy chính và nguy cơ làm hỏng code cũ.
+6. **Review hồi quy bằng mã nguồn:** đọc code/diff để đối chiếu lỗi đã sửa, các đường chạy chính và nguy cơ làm hỏng chức năng cũ; chưa chạy build/test thực tế ở giai đoạn này.
 
 Thứ tự tối thiểu:
-- **Vòng 1:** Review toàn diện bản hiện có → sửa → test → ghi lại commit/kết quả.
-- **Vòng 2:** Review toàn diện **bản sau vòng 1** → sửa → test → ghi lại commit/kết quả.
-- **Vòng 3:** Review toàn diện **bản sau vòng 2** → sửa → test → ghi lại commit/kết quả.
-- Nếu còn lỗi đáng kể hoặc bằng chứng chưa đủ: tiếp tục vòng 4, 5...; không tự tuyên bố đã đạt chỉ vì đủ ba lượt.
+- **Review toàn diện vòng 1/3:** đọc/đối chiếu toàn bộ code task ở đủ 6 khía cạnh. Không có lỗi phải sửa → ghi nhận vòng 1/3, push nhánh/PR và **báo Leader ngay** để reviewer đọc được thay đổi.
+- **Review toàn diện vòng 2/3:** đọc/đối chiếu lại toàn bộ code đang xét, chú trọng hồi quy, trên phiên bản sau vòng 1.
+- **Review toàn diện vòng 3/3:** độc lập xem lại toàn bộ code trên phiên bản sau vòng 2; đạt khi không còn lỗi phải sửa.
+- **Bất kỳ vòng nào phát hiện lỗi thực sự phải sửa → sửa code, đặt lại tiến độ 0/3 và bắt đầu lại từ vòng 1/3.** Góp ý cải tiến không phải lỗi buộc sửa được ghi riêng, không tự coi là FAIL; không tuyên bố hoàn thành chỉ vì đếm đủ ba lượt.
 - Mỗi vòng phải là lượt kiểm tra riêng sau khi đã áp dụng/kết luận lượt trước. **Không chia một đợt đọc code thành nhiều vòng** để đủ chỉ tiêu.
 - Nếu không phát hiện lỗi ở một vòng, ghi rõ phạm vi đã xem, cách kiểm chứng và lý do không cần commit sửa code; không tạo commit giả.
-- Nếu môi trường không thể chạy test/build, ghi rõ **chưa chạy**, rủi ro còn tồn tại; tuyệt đối không trình bày như đã pass.
+- **Giai đoạn này chỉ review code, không yêu cầu build/test/runtime.** Build/test dành cho giai đoạn hoàn thiện/đóng gói theo quyết định Owner. Nếu đề cập build/test trong báo cáo phải ghi đúng **chưa chạy**; không được gọi ba vòng review là ba lần kiểm thử runtime.
 
 ## 3. Nhật ký review có thể kiểm chứng
 
 Sau mỗi vòng, báo cáo tối thiểu:
 - PR/nhánh và SHA được review; danh sách file **thuộc phạm vi AI**.
 - Kết quả cho đủ sáu khía cạnh trên; mức độ ảnh hưởng và file/dòng cho lỗi phát hiện.
-- Những sửa đổi đã push, commit SHA; test cụ thể đã chạy và kết quả (hoặc nguyên nhân chưa chạy).
+- Những sửa đổi đã push, commit SHA; bằng chứng của vòng review toàn diện (code, file/dòng, tình huống và lập luận). Build/test ở giai đoạn này ghi **chưa chạy** nếu có đề cập.
 - Rủi ro còn lại, việc thuộc AI khác đã **chỉ báo cáo, không sửa**.
 - Trạng thái: `Đang review`, `Chưa đạt`, hoặc `Đủ điều kiện trình chủ dự án`; không tự gắn trạng thái được merge.
 
@@ -46,21 +46,21 @@ Sau mỗi vòng, báo cáo tối thiểu:
 - **Không push trực tiếp vào `main`; không merge PR, squash, rebase vào `main` hay đóng PR thay người dùng chỉ vì đã hoàn thành.**
 - Kết thúc ít nhất ba vòng review toàn diện **không đồng nghĩa** được phép merge.
 - Chỉ merge `main` sau khi chủ dự án **xác nhận rõ ràng** PR cụ thể được merge, sau khi đọc báo cáo review/test và các vấn đề tồn.
-- AI khác báo hoàn thành → **Muse tự review đủ 3 vòng toàn diện, vòng cuối 0 lỗi mới được merge** (kể cả khi AI đó đã tự review 3 vòng). Vẫn cần chủ dự án xác nhận riêng từng PR.
+- AI khác báo hoàn thành → **Leader chịu trách nhiệm review đủ 3 vòng toàn diện, vòng cuối không còn lỗi cần sửa**, trước khi trình merge. **AI thực hiện task không phải theo dõi hoặc đếm số vòng review của Leader/AI khác; chỉ cần tiếp nhận và xác minh các lỗi họ báo.** Quyền merge vẫn theo quyết định Owner hoặc ủy quyền merge hợp lệ.
 - Nếu PR bị conflict với nhánh của AI khác, không tự hòa giải. Báo chủ dự án để điều phối người có quyền; chưa được merge.
 - Các nhánh fix hoặc PR khác không được tính là quyền sở hữu mới chỉ vì AI đó từng mở hoặc sửa chúng.
 
 ## 5. Phạm vi AI hiện tại
 
-- **AI đang thực hiện cuộc làm việc này:** chỉ được phụ trách **đúng nhánh/PR mà chủ dự án chỉ định rõ trong cuộc trò chuyện hiện tại**.
-- **Lệnh giao việc từ Leader (Muse) có hiệu lực như lệnh của Chủ dự án:** AI nhận lệnh giao việc từ Leader trên GitHub thì thực hiện ngay, không cần chờ Chủ dự án phân công lại.
-- **Các nhánh/PR khác không được giao không thuộc AI này.** Không tự đọc/sửa nhánh của AI khác, không tự mở hoặc phục hồi PR ngoài phạm vi.
+- **AI đang thực hiện task:** chỉ sửa đúng nhánh/PR do Owner giao hoặc **Leader giao hợp lệ trên GitHub**; không cần Owner nhắn lại trong cuộc trò chuyện. Chỉ thị rút/hủy mới hơn được ưu tiên.
+- **Lệnh giao việc của Leader có hiệu lực ủy quyền thực hiện task từ Owner.** Trong dự án video-ai hiện nay **Muse là Leader**; ở dự án khác Leader có thể là AI/người khác. Agent đọc task GitHub, kiểm chứng lỗi có đúng rồi thực hiện ngay hoặc phản biện có bằng chứng; không tự suy ra quyền merge từ quyền giao task.
+- **Không sửa nhánh/PR của AI khác.** Chỉ đọc nhánh/PR khác khi được giao vai trò review; không tự nhận lại task đã rút, không tự mở hoặc phục hồi PR ngoài phạm vi.
 - PR chưa có phép merge của chủ dự án thì không được tự merge. Xung đột giữa nhánh do AI khác viết là việc cần chủ dự án phân quyền, không tự giải quyết.
-- Không tự kích hoạt CI/build nặng; chỉ chạy kiểm thử có kiểm soát khi phù hợp.
+- Giai đoạn nhận/sửa task áp dụng review mã nguồn, **không kích hoạt build/test/runtime**; hoạt động build/test phục vụ giai đoạn hoàn thiện/đóng gói theo chỉ đạo Owner.
 
 ## 6. Mẫu sổ theo dõi
 
-| Vòng | SHA đầu vào | Chức năng + lỗi + hiệu năng + code sạch + an toàn + hồi quy | Commit sửa | Test và kết quả | Tồn đọng | Kết luận |
+| Vòng review toàn diện | SHA đã review | Chức năng + lỗi + hiệu năng + code sạch + an toàn + hồi quy | Commit sửa (nếu có) | Bằng chứng review code | Tồn đọng | Kết luận |
 |---|---|---|---|---|---|---|
 | 1 | (điền sau) | (phải đủ sáu mục) | (nếu có) | (đúng thực tế) | (ghi rõ) | Chưa kết luận |
 | 2 | Chưa bắt đầu | Chưa bắt đầu | — | — | — | Chưa kết luận |
@@ -136,3 +136,27 @@ Khi báo cáo lỗi thì thêm 2 dòng tóm tắt (không lan man):
 - Đề xuất cải tiến (nếu có): <giải pháp tốt hơn / công nghệ tốt hơn / phản biện tốt hơn — tóm tắt 1 dòng; chỉ ghi khi thật sự có ý hay hơn cách hiện tại>
 
 Mẫu này áp dụng cho mọi loại lỗi, kể cả xung đột giữa 2 code/nhánh (conflict).
+
+## 9. Không overthinking
+
+- Mọi AI không overthinking: chỉ kiểm chứng đủ để quyết định, không phân tích thêm vòng mới khi đã đủ bằng chứng; không tranh luận lặp lại cùng một finding; khi đủ thông tin thì làm hoặc trình Owner quyết, không kéo dài.
+
+## 10. Báo cáo nhánh fix khi mở nhánh
+
+- Mỗi lần fix mở nhánh mới thì báo ngay trong chat: sửa mục nào, mở nhánh nào (tên nhánh + head), vì sao mở thêm nhánh (nếu 1 mục mở nhiều nhánh). Không để Owner phải hỏi mới biết.
+
+## 11. Quy tắc sửa trực tiếp, không cần tạo nhánh
+
+- Sửa file quy tắc (QUY-TAC-CHUNG.md, agents-sub.md, các file dùng chung) thì làm trực tiếp, không cần tạo nhánh — ghi thẳng vào file, đồng bộ 2 chiều như thường.
+
+## 12. Quy trình giao task cho AI khác — từ giao đến merge
+
+- **Giao việc:** Leader đăng task trên GitHub, nêu rõ AI nhận việc, mục tiêu/lỗi, nhánh, base `main`, phạm vi. Mỗi AI một task/một nhánh. **Leader là vai trò theo từng dự án; hiện Muse giữ vai trò Leader của video-ai**, không phải tên cố định cho mọi dự án.
+- **Nhận task:** Lệnh giao task hợp lệ của Leader trên GitHub được hiểu là Owner đã đồng ý thực hiện, không cần Owner nhắn lại. AI **tự kiểm tra mã nguồn trước khi làm**: nếu nhận định lỗi đúng/phương án phù hợp thì triển khai; nếu lỗi sai hoặc phương án không đạt mục tiêu thì phản biện bằng SHA, file/dòng và lập luận. Lệnh rút/hủy mới hơn có ưu tiên.
+- **Tự review toàn diện 3 vòng liên tiếp:** **Không dùng chữ PASS để chỉ các vòng này.** Review toàn diện nghĩa là đọc/đối chiếu code trên toàn phạm vi task, đủ cả 6 khía cạnh ở mục 2; vòng 2 và 3 là **review hồi quy trên code**, không phải build/test. Trong giai đoạn làm task **không build/test/runtime**; những hoạt động đó thuộc giai đoạn hoàn thiện/đóng gói.
+  - **Hoàn thành review toàn diện vòng 1/3:** phải push nhánh/PR để Leader và reviewer đọc được, rồi **báo ngay trên GitHub** kèm nhánh, commit SHA, phạm vi, kết quả và bằng chứng review. AI thực hiện **không chờ Leader** mà tiếp tục hai vòng còn lại.
+  - **Hoàn thành review toàn diện vòng 2/3 và 3/3:** báo tiếp lên GitHub, kèm SHA và bằng chứng của từng vòng. Không chia một lượt đọc code thành nhiều vòng.
+  - **Nếu bất kỳ vòng nào hoặc phản biện bên ngoài phát hiện lỗi thực sự cần sửa:** AI thực hiện kiểm tra và phản biện; nếu lỗi đúng → sửa rồi **reset tiến độ về 0/3**, bắt đầu lại từ review toàn diện vòng 1/3. Nếu nhận định sai → đăng phản chứng; chưa đủ bằng chứng → ghi chưa xác minh. Một góp ý cải tiến không phải lỗi cần sửa không tự gây reset.
+- **Review chéo sau vòng 1:** **chỉ sau khi** AI thực hiện **đã push code và báo hoàn thành review toàn diện vòng 1/3 trên GitHub**, **Leader và AI reviewer được giao bắt đầu đọc/review nhánh đó** trong khi AI thực hiện tiếp tục vòng 2/3 và 3/3; các reviewer báo lỗi trên Issue/PR, **không sửa/commit/push lên nhánh do AI khác phụ trách**. AI thực hiện task **chỉ cần tiếp nhận và xử lý báo lỗi**, **không cần theo dõi/đếm ba vòng review của Leader hoặc AI khác**. Quy trình và số vòng review của từng reviewer là trách nhiệm của reviewer/Leader.
+- **Cổng merge:** Leader chịu trách nhiệm review và quyết định kỹ thuật theo quyền, xử lý các phát hiện cần sửa. **Giao task không đồng nghĩa có quyền merge**: chỉ merge khi Owner cho phép PR đó hoặc có ủy quyền merge hợp lệ áp dụng cho PR. Không merge nếu còn lỗi đã xác nhận chưa được xử lý.
+- **Kết thúc:** **PR merge thành công vào `main` = task DONE ngay.** Việc dọn nhánh, thông báo hoặc kiểm tra hậu merge không giữ task cũ ở trạng thái đang làm. Nếu sau merge có AI hoặc người khác báo lỗi: vẫn xác minh và phản biện; **nếu lỗi đúng, tạo task bugfix MỚI liên kết task/PR cũ**, phân công/ủy quyền hợp lệ rồi bắt đầu lại quy trình review toàn diện 3 vòng; **không mở lại task đã DONE**.
