@@ -133,4 +133,4 @@ Khi báo cáo lỗi thì thêm 2 dòng tóm tắt (không lan man):
 - Cách giải quyết: <tóm tắt 1 dòng>
 - Đề xuất cải tiến (nếu có): <giải pháp tốt hơn / công nghệ tốt hơn / phản biện tốt hơn — tóm tắt 1 dòng; chỉ ghi khi thật sự có ý hay hơn cách hiện tại>
 
-Mẫu này áp dụng cho mọi loại lỗi, kể cả lỗi config code (file cấu hình trong code: vite.config, .env, electron-builder.yml, tsconfig...).
+Mẫu này áp dụng cho mọi loại lỗi, kể cả xung đột giữa 2 code/nhánh (conflict).
