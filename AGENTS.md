@@ -18,7 +18,7 @@ File này lưu các yêu cầu chung cho mọi dự án. Khi sửa hoặc tạo 
 - File này là bộ quy ước nền, không phụ thuộc tên dự án, đường dẫn máy cá nhân hoặc repository cụ thể.
 - Khi sao chép sang dự án khác, giữ các nguyên tắc chung và bổ sung quy định riêng trong một mục có ghi rõ phạm vi áp dụng.
 - Không đưa đường dẫn tuyệt đối của máy cá nhân hoặc yêu cầu đồng bộ với một repository khác vào quy ước dùng chung.
-- **File dùng chung giữa các dự án** (`AGENTS.md`, `agents-sub.md`, `dev-setup-agent.md`, `frontend-angular-agent.md`, `QUY-TAC-CHUNG.md`): bản chính nằm ở **AI-Collaboration-Hub** để dự án nào cũng dùng được; khi sửa một file dùng chung thì **đồng thời sửa ở cả hai nơi** (video-ai và hub) để không lệch nhau.
+- **File dùng chung giữa các dự án** (`AGENTS.md`, `agents-sub.md`, `dev-setup-agent.md`, `frontend-angular-agent.md`, `.agents/skills/`, `QUY-TAC-CHUNG.md`): bản chính nằm ở **AI-Collaboration-Hub** để dự án nào cũng dùng được; khi sửa một file dùng chung thì **đồng thời sửa ở cả hai nơi** (video-ai và hub) để không lệch nhau.
 
 ## Thứ tự ưu tiên khi các quy tắc có vẻ chồng chéo
 
