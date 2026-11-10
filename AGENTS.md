@@ -215,26 +215,9 @@ File này lưu các yêu cầu chung cho mọi dự án. Khi sửa hoặc tạo 
 - Comment bằng tiếng Việt tại những đoạn khó hiểu hoặc cần giải thích lý do.
 - Comment cần giải thích “tại sao làm như vậy”, không lặp lại nguyên văn câu lệnh.
 - Không viết comment dài cho đoạn code vốn đã rõ nhờ tên hàm và tên biến.
-- Mặc định chỉ dùng comment một dòng `//`.
-- Không dùng block comment `/** ... */` hoặc `/* ... */` trong code nghiệp vụ.
+- Mặc định chỉ dùng comment một dòng `//`. Không dùng block comment `/** ... */` hoặc `/* ... */` trong code nghiệp vụ (ví dụ: `// API trả thời gian UTC nhưng màn hình cần hiển thị theo giờ Việt Nam.`).
 - Nếu nội dung comment cần nhiều dòng, viết thành nhiều dòng `//` liên tiếp để dễ đọc và dễ sửa.
 - Chỉ dùng JSDoc `/** ... */` khi một công cụ tạo tài liệu hoặc thư viện public thực sự bắt buộc; không dùng JSDoc cho component, field và hàm nội bộ thông thường.
-
-Ví dụ comment đúng:
-
-```ts
-// API trả thời gian UTC nhưng màn hình cần hiển thị theo giờ Việt Nam.
-const displayedStartTime = TimeUtils.toVietnamTime(apiStartTime);
-```
-
-Không viết:
-
-```ts
-/**
- * API trả thời gian UTC nhưng màn hình cần hiển thị theo giờ Việt Nam.
- */
-const displayedStartTime = TimeUtils.toVietnamTime(apiStartTime);
-```
 
 ## Cách làm form mới
 
@@ -328,14 +311,6 @@ Xem `dev-setup-agent.md` (mục tự tạo và duy trì bản đồ toàn dự �
 - Không để quá trình kiểm tra tự ý thay đổi version; nếu script build tự tăng version thì phải hoàn lại thay đổi phát sinh do kiểm tra.
 - Không sửa hoặc rollback những thay đổi khác đang có trong working tree.
 - Báo rõ phần đã kiểm tra và các lỗi môi trường không liên quan nếu có.
-
-## Quy tắc viết code để junior dễ đọc
-
-- Viết code theo đúng thứ tự người dùng thao tác: nhận dữ liệu → kiểm tra → xử lý → gọi API → cập nhật giao diện.
-- Ưu tiên tên biến, tên hàm và tên class nói rõ nghiệp vụ; tránh tên chung chung như `data`, `item`, `value` hoặc `handle` khi có thể đặt tên cụ thể hơn.
-- Không gom nhiều nghiệp vụ vào một hàm hoặc một biểu thức dài. Tách thành các bước nhỏ khi việc tách giúp người mới hiểu luồng dễ hơn.
-- Comment bằng tiếng Việt cho phần xử lý không hiển nhiên, tập trung giải thích lý do; không dùng comment để che một cấu trúc code khó đọc.
-- Trước khi bàn giao, đọc lại như một junior mới vào dự án: nếu phải đoán kiểu dữ liệu, điểm gọi API hoặc nơi cập nhật giao diện thì phải viết lại cho tường minh hơn.
 
 ## Quy tắc bắt buộc về Code sạch, Tối ưu hiệu năng và Tiết kiệm Token cho AI
 
