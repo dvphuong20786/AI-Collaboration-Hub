@@ -46,6 +46,7 @@ Sau mỗi vòng, báo cáo tối thiểu:
 - **Không push trực tiếp vào `main`; không merge PR, squash, rebase vào `main` hay đóng PR thay người dùng chỉ vì đã hoàn thành.**
 - Kết thúc ít nhất ba vòng review toàn diện **không đồng nghĩa** được phép merge.
 - Chỉ merge `main` sau khi chủ dự án **xác nhận rõ ràng** PR cụ thể được merge, sau khi đọc báo cáo review/test và các vấn đề tồn.
+- AI khác báo hoàn thành → **Muse tự review đủ 3 vòng toàn diện, vòng cuối 0 lỗi mới được merge** (kể cả khi AI đó đã tự review 3 vòng). Vẫn cần chủ dự án xác nhận riêng từng PR.
 - Nếu PR bị conflict với nhánh của AI khác, không tự hòa giải. Báo chủ dự án để điều phối người có quyền; chưa được merge.
 - Các nhánh fix hoặc PR khác không được tính là quyền sở hữu mới chỉ vì AI đó từng mở hoặc sửa chúng.
 
