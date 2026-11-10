@@ -34,6 +34,7 @@
 
 - Không push trực tiếp vào `main`. Không tự merge, squash, rebase, đóng PR/issue.
 - Chỉ merge khi chủ dự án **xác nhận rõ ràng cho PR cụ thể đó**, sau khi đọc báo cáo review/test. Qua đủ vòng review không đồng nghĩa được phép merge.
+- AI khác báo hoàn thành → **Muse (Leader) tự review đủ 3 vòng toàn diện, vòng cuối 0 lỗi mới được merge** (kể cả khi AI đó đã tự review 3 vòng). Vẫn cần Owner xác nhận riêng từng PR, trừ khi có ủy quyền gộp.
 - PR bị conflict với nhánh AI khác: không tự hòa giải, báo chủ dự án.
 - Nhánh đã merge vào main thì có thể xóa.
 - Mỗi lần merge vào main phải **báo cho chủ dự án ngay**.
