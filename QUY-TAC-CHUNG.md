@@ -104,3 +104,7 @@
 ## 17. Không overthinking
 
 - Mọi AI không overthinking: chỉ kiểm chứng đủ để quyết định, không phân tích thêm vòng mới khi đã đủ bằng chứng; không tranh luận lặp lại cùng một finding; khi đủ thông tin thì làm hoặc trình Owner quyết, không kéo dài.
+
+## 18. Báo cáo nhánh fix khi mở nhánh
+
+- Mỗi lần fix mở nhánh mới thì báo ngay trong chat: sửa mục nào, mở nhánh nào (tên nhánh + head), vì sao mở thêm nhánh (nếu 1 mục mở nhiều nhánh). Không để Owner phải hỏi mới biết.
