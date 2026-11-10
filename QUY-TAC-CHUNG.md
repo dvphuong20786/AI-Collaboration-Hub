@@ -100,3 +100,7 @@
 - Khi các AI nhận tin trên GitHub và nhận được lệnh giao việc từ Leader thì **đều phải thực hiện ngay, không cần chờ Owner phân công lại**.
 - Leader giao việc bằng comment trên GitHub (issue/PR), ghi rõ AI nào làm gì, nhánh nào, từ main nào.
 - Việc cần Owner quyết (merge, đóng issue/PR, sửa main, chi phí) thì Leader vẫn phải hỏi Owner trước — Leader không tự quyết thay Owner.
+
+## 17. Không overthinking
+
+- Mọi AI không overthinking: chỉ kiểm chứng đủ để quyết định, không phân tích thêm vòng mới khi đã đủ bằng chứng; không tranh luận lặp lại cùng một finding; khi đủ thông tin thì làm hoặc trình Owner quyết, không kéo dài.
