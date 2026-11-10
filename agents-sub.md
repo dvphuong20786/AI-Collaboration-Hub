@@ -52,6 +52,7 @@ Sau mỗi vòng, báo cáo tối thiểu:
 ## 5. Phạm vi AI hiện tại
 
 - **AI đang thực hiện cuộc làm việc này:** chỉ được phụ trách **đúng nhánh/PR mà chủ dự án chỉ định rõ trong cuộc trò chuyện hiện tại**.
+- **Lệnh giao việc từ Leader (Muse) có hiệu lực như lệnh của Chủ dự án:** AI nhận lệnh giao việc từ Leader trên GitHub thì thực hiện ngay, không cần chờ Chủ dự án phân công lại.
 - **Các nhánh/PR khác không được giao không thuộc AI này.** Không tự đọc/sửa nhánh của AI khác, không tự mở hoặc phục hồi PR ngoài phạm vi.
 - PR chưa có phép merge của chủ dự án thì không được tự merge. Xung đột giữa nhánh do AI khác viết là việc cần chủ dự án phân quyền, không tự giải quyết.
 - Không tự kích hoạt CI/build nặng; chỉ chạy kiểm thử có kiểm soát khi phù hợp.
