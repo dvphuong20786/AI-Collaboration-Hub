@@ -14,7 +14,8 @@ concurrency:
 
 jobs:
   relay:
-    # Ignore our own ChatGPT GitHub replies to prevent Slack -> Work -> GitHub loops.
+    # Only the 3 allowlisted logins relay (Muse, Jules, Owner); ChatGPT's bot
+    # is not listed, which prevents Slack -> Work -> GitHub loops.
     # Only Hub Issue #1 and explicitly allowed participants.
     if: >-
       github.event_name == 'workflow_dispatch' ||
@@ -33,6 +34,11 @@ jobs:
       - name: Relay to Slack (no GitHub API calls)
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          # Repository variable: Slack user ID of the ChatGPT app. The Owner
+          # sets it (Settings -> Secrets and variables -> Actions -> Variables)
+          # once the Slack app is installed; empty until then means no @mention.
+          # Never invent an ID here.
+          CHATGPT_SLACK_USER_ID: ${{ vars.CHATGPT_SLACK_USER_ID }}
           GITHUB_EVENT_PATH: ${{ github.event_path }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -50,15 +56,21 @@ jobs:
 
           url = os.environ.get("SLACK_WEBHOOK_URL", "").strip()
           if not url:
-              print("SLACK_WEBHOOK_URL secret not set. Pilot disabled.")
-              sys.exit(0)
+              print("ERROR: SLACK_WEBHOOK_URL secret is not set. Failing the run "
+                    "so the missing secret is visible instead of a false green.")
+              sys.exit(1)
 
           with open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8") as file:
               event = json.load(file)
 
+          # Optional @mention of the ChatGPT Slack app, from the
+          # CHATGPT_SLACK_USER_ID repository variable. Empty means no mention.
+          mention_id = os.environ.get("CHATGPT_SLACK_USER_ID", "").strip()
+          mention = f"<@{mention_id}> " if mention_id else ""
+
           if os.environ["GITHUB_EVENT_NAME"] == "workflow_dispatch":
               text = (
-                  "*AI Collaboration Hub test*\n"
+                  f"{mention}*AI Collaboration Hub test*\n"
                   "Manual test from GitHub Actions. Does this message launch a ChatGPT Work task?\n"
                   f"Run ID: {os.environ.get('GITHUB_RUN_ID', '')}"
               )
@@ -69,8 +81,10 @@ jobs:
               link = comment["html_url"]
               body = (comment.get("body") or "").strip().replace("\r", "")
               excerpt = body[:450] + ("…" if len(body) > 450 else "")
+              # Escape for Slack mrkdwn so & < > in the comment render as text.
+              excerpt = excerpt.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
               text = (
-                  f"*Hub Issue #1 — new comment from {sender}*\n"
+                  f"{mention}*Hub Issue #1 — new comment from {sender}*\n"
                   f"<{link}|Read the GitHub comment>\n"
                   f"Comment ID: {comment_id}\n"
                   f"{excerpt}\n\n"
@@ -112,5 +126,4 @@ jobs:
                       continue
                   raise RuntimeError(f"Slack network error: {err.reason}") from None
 
-          raise RuntimeError("Slack relay exhausted retries.")
           PY
