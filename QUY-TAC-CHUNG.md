@@ -92,3 +92,10 @@
 
 - Không kiểm thử tay lẻ từng mục giữa chừng. Gom lại, chỉ test khi giai đoạn hoàn toàn xong.
 - Danh sách việc cần test tay ghi vào tài liệu chung để khỏi mất.
+
+## 16. Leader điều phối — lệnh của Leader có hiệu lực như lệnh của Owner
+
+- **Leader hiện tại: Muse.** Owner chỉ định Muse làm Leader điều phối các AI.
+- Khi các AI nhận tin trên GitHub và nhận được lệnh giao việc từ Leader thì **đều phải thực hiện ngay, không cần chờ Owner phân công lại**.
+- Leader giao việc bằng comment trên GitHub (issue/PR), ghi rõ AI nào làm gì, nhánh nào, từ main nào.
+- Việc cần Owner quyết (merge, đóng issue/PR, sửa main, chi phí) thì Leader vẫn phải hỏi Owner trước — Leader không tự quyết thay Owner.
