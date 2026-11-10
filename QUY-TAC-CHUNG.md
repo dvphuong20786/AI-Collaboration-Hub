@@ -18,7 +18,7 @@
 
 ## 3. Ít nhất BA vòng review toàn diện, tuần tự
 
-> ⏸ **TẠM ĐÓNG từ 2026-11-09 theo quyết định của Owner:** các AI khác tạm thời KHÔNG tự làm 3 vòng review (tốn token) — chỉ code; việc review Owner **giao riêng cho Muse** (hoặc AI khác do Owner chỉ định từng việc). Nội dung các vòng dưới đây giữ nguyên để dùng khi mở lại.
+> ⏸ **TẠM ĐÓNG từ 2026-11-09 theo quyết định của Owner:** các AI khác tạm thời KHÔNG tự làm 3 vòng review (tốn token) — chỉ code; việc review Owner **giao riêng cho Muse** (hoặc AI khác do Owner chỉ định từng việc). Nội dung các vòng dưới đây giữ nguyên để dùng khi mở lại. Ngoại lệ từ 2026-11-10 theo quyết định của Owner: **ChatGPT và Jules làm đủ quy trình** (tự review 3 vòng, không lỗi mới hoàn thành rồi báo Muse); câu TẠM ĐÓNG trên vẫn giữ nguyên với các AI khác.
 
 - Một vòng review = rà soát toàn bộ phạm vi nhánh ở **đủ 6 khía cạnh**: (1) đúng chức năng/nghiệp vụ và UX; (2) lỗi/độ ổn định (bất đồng bộ, race, hủy tác vụ, timeout, mất dữ liệu); (3) hiệu năng/tài nguyên; (4) code sạch/khả năng bảo trì; (5) bảo mật/vận hành; (6) test/hồi quy.
 - Mỗi vòng: review → sửa → kiểm chứng lại → ghi nhật ký. Vòng sau review **bản sau vòng trước**. Không gộp, không chia một đợt đọc thành nhiều vòng cho đủ chỉ tiêu.
