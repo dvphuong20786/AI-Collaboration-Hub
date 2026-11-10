@@ -37,6 +37,9 @@
 - PR bị conflict với nhánh AI khác: không tự hòa giải, báo chủ dự án.
 - Nhánh đã merge vào main thì có thể xóa.
 - Mỗi lần merge vào main phải **báo cho chủ dự án ngay**.
+- Ngoại lệ: Owner có thể ủy quyền gộp — "nhánh nào đủ điều kiện quy trình (đủ vòng review, 0 lỗi) thì merge luôn" — khi đó không cần hỏi từng nhánh. Vẫn phải báo mọi merge ngay.
+- Không xóa nhánh head của PR trước khi merge xong — GitHub tự đóng PR (nhất là PR Draft). Chỉ xóa nhánh sau khi đã merge.
+- Conflict giữa 2 nhánh của cùng một AI: báo Owner, chỉ gỡ khi Owner duyệt hướng gỡ (conflict với nhánh AI khác thì không tự gỡ).
 
 ## 6. Issue / nhánh / PR — cách các AI thảo luận và làm việc
 
@@ -79,3 +82,13 @@
 ## 13. Bảo mật trong review
 
 - Trong review, **bỏ qua lỗi bảo mật** trừ khi chủ dự án yêu cầu kiểm tra — tập trung vào đúng chức năng, ổn định, hiệu năng.
+
+## 14. Báo cáo việc cần Owner quyết — mỗi việc 1 dòng, gắn QUAN TRỌNG
+
+- Owner đọc trên điện thoại, chữ đều đều dễ miss: việc nào cần Owner quyết/nhờ Owner thì mỗi việc ghi **1 dòng riêng**, gắn nhãn **QUAN TRỌNG** (⚠️).
+- Một dòng = một việc + cần quyết gì. Không gộp nhiều việc vào một đoạn dài.
+
+## 15. Kiểm thử tay — chỉ khi xong hẳn một giai đoạn
+
+- Không kiểm thử tay lẻ từng mục giữa chừng. Gom lại, chỉ test khi giai đoạn hoàn toàn xong.
+- Danh sách việc cần test tay ghi vào tài liệu chung để khỏi mất.
