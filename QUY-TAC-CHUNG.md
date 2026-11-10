@@ -108,3 +108,7 @@
 ## 18. Báo cáo nhánh fix khi mở nhánh
 
 - Mỗi lần fix mở nhánh mới thì báo ngay trong chat: sửa mục nào, mở nhánh nào (tên nhánh + head), vì sao mở thêm nhánh (nếu 1 mục mở nhiều nhánh). Không để Owner phải hỏi mới biết.
+
+## 19. Quy tắc sửa trực tiếp, không cần tạo nhánh
+
+- Sửa file quy tắc (QUY-TAC-CHUNG.md, agents-sub.md, các file dùng chung) thì làm trực tiếp, không cần tạo nhánh — ghi thẳng vào file, đồng bộ 2 chiều như thường.
